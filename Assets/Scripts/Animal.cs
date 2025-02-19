@@ -12,6 +12,7 @@ public class Animal : MonoBehaviour
     public float m_food = 100f;
 
     public float m_speed = 2f;
+    public float m_recovery_speed = 2f;
     public float m_energy = 100f;
 
     public float m_fov = 3f;
@@ -86,13 +87,6 @@ public class Animal : MonoBehaviour
                     }
                 }
                 return nearestWater;
-            }
+        }
     }   
-
-    //Good for debugging
-    protected void OnDrawGizmos()
-    {
-        Handles.color = Color.red;
-        Handles.DrawSolidDisc(transform.position, Vector3.up, m_fov);
-    }
 }
