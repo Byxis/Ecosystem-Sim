@@ -6,48 +6,45 @@ using System.Collections.Generic;
 
 public class Carnivorous : Animal
 {
-    // Update is called once per frame
+    protected List<GameObject> m_preyList = new();
+
     protected override void Update()
     {
-        this.m_navMeshAgent.speed = m_speed;
-
         base.Update();
-        
-        foreach (Collider collider in m_detectedColliders)
+
+        m_preyList.Clear();
+    }
+
+    //Method to add colliders to the list of detected colliders
+    protected override void HandleColliderDetection(Collider collider)
+    {
+        base.HandleColliderDetection(collider);
+
+        if (collider.GetComponent<Animal>() != null && collider.GetComponent<Animal>().GetType() == typeof(Herbivorous))
         {
-            //If the animal sees another animal
-            if (collider.GetComponent<Animal>() != null)
-            {
-                //If the animal is a herbivorous
-                if (collider.GetComponent<Animal>().GetType() == typeof(Herbivorous))
-                {
-                    Hunt(collider.gameObject);
-                }
-            }
-        }
-        //If the animal needs to drink water
-        if (m_water < 60)
-        {
-            if (m_waterList.Count > 0)
-            {
-                this.m_navMeshAgent.SetDestination(NearestWaterSource());
-                this.m_water = 100;
-            }
-            else
-            {
-                RandomMove();
-            }
+            m_preyList.Add(collider.gameObject);
         }
     }
 
-    protected void Hunt(GameObject _prey)
+    //Method to make the animal eat
+    protected override void Eat()
     {
-        this.m_navMeshAgent.speed = m_speed * 2;
-        this.m_navMeshAgent.SetDestination(_prey.transform.position);
+        if (m_preyList.Count > 0 && m_food < m_foodtreshold)
+        {
+            Attack(m_preyList[0]);
+        }
+    }
+
+    //Method to make the animal attack
+    protected void Attack(GameObject _prey)
+    {
+        m_navMeshAgent.speed = m_runspeed;
+        m_navMeshAgent.SetDestination(_prey.transform.position);
         if (Vector3.Distance(transform.position, _prey.transform.position) < 1)
         {
-            Destroy(_prey.gameObject);
+            Destroy(_prey);
             this.m_food = 100;
+            m_navMeshAgent.speed = m_speed;
         }
     }
 

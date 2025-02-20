@@ -4,64 +4,76 @@ using UnityEngine;
 
 public class Herbivorous : Animal
 {
-    protected List<Vector3> m_vegetationList = new List<Vector3>();
+    protected List<Vector3> m_vegetationList = new();
+    protected List<GameObject> m_predatorList = new();
 
-    // Update is called once per frame
     protected override void Update()
     {
-        this.m_navMeshAgent.speed = m_speed;
-
         base.Update();
 
-        foreach (Collider collider in m_detectedColliders)
-        {
-            //If the animal sees another animal
-            if (collider.GetComponent<Animal>() != null)
-            {
-                //If the animal is a herbivorous
-                if (collider.GetComponent<Animal>().GetType() == typeof(Carnivorous))
-                {
-                    this.m_navMeshAgent.SetDestination(transform.position + (transform.position - collider.transform.position));
-                    this.m_navMeshAgent.speed = m_speed * 3;
-                }
-            }
+        Flee();
 
-            //If the animal sees vegetation
-            if (collider.CompareTag("Vegetation"))
-            {
-                m_vegetationList.Add(collider.ClosestPoint(transform.position));
-            }
+        m_predatorList.Clear();
+    }
+
+    //Method to add colliders to the list of detected colliders
+    protected override void HandleColliderDetection(Collider collider)
+    {
+        base.HandleColliderDetection(collider);
+
+        if (collider.CompareTag("Vegetation"))
+        {
+            m_vegetationList.Add(collider.ClosestPoint(transform.position));
         }
 
-        //If the animal needs to drink water
-        if (m_water < 60)
+        if (collider.GetComponent<Animal>() != null && collider.GetComponent<Animal>().GetType() == typeof(Carnivorous))
         {
-            if (m_waterList.Count > 0)
-            {
-                this.m_navMeshAgent.SetDestination(NearestWaterSource());
-                this.m_water = 100;
-            }
-            else
-            {
-                RandomMove();
-            }
-        }
-
-        //If the animal needs to eat
-        if (m_food < 80)
-        {
-            if (m_vegetationList.Count > 0)
-            {
-                this.m_navMeshAgent.SetDestination(NearestVegetation());
-                this.m_food = 100;
-            }
-            else
-            {
-                RandomMove();
-            }
+            m_predatorList.Add(collider.gameObject);
         }
     }
 
+    //Method to make the animal flee
+    protected void Flee()
+    {
+        if (m_predatorList.Count > 0)
+        {
+
+            m_navMeshAgent.SetDestination(transform.position + (transform.position - m_predatorList[0].transform.position));
+            m_navMeshAgent.speed = m_runspeed*3;
+        }
+        else
+        {
+            m_navMeshAgent.speed = m_speed;
+        }
+    }
+
+    //Method to make the animal eat
+    protected override void Eat()
+    {
+        if ((m_vegetationList.Count > 0 && m_food < m_foodtreshold) || isEating)
+        {
+            Vector3 nearestVegetation = NearestVegetation();
+            m_navMeshAgent.SetDestination(nearestVegetation);
+
+            if (Vector3.Distance(transform.position, nearestVegetation) < 1)
+            {
+                isEating = true;
+
+                m_food = Mathf.Min(m_food + 10 * Time.deltaTime, 100f);
+
+                if (m_food == 100)
+                {
+                    isEating = false;
+                }
+            }
+        }
+        else
+        {
+            isEating = false;
+        }
+    }
+
+    //Method to get the nearest vegetation
     protected Vector3 NearestVegetation()
     {
         if (m_vegetationList.Count == 1)
@@ -84,8 +96,8 @@ public class Herbivorous : Animal
         }
     }
 
-//Good for debugging
-protected void OnDrawGizmos()
+    //Good for debugging
+    protected void OnDrawGizmos()
     {
         Handles.color = Color.green;
         Handles.DrawSolidDisc(transform.position, Vector3.up, m_fov);
