@@ -181,12 +181,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f062b07ba4f62946a8103b2a1c0ab1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_minCorner: {x: -5, y: 1, z: -5}
-  m_maxCorner: {x: 5, y: 5, z: 5}
   m_movement: {fileID: -943025169029361679, guid: 6bb05a29b875a2e4cad3f7409eb8fb25, type: 3}
   m_rotation: {fileID: -1451711875105417245, guid: 6bb05a29b875a2e4cad3f7409eb8fb25, type: 3}
   m_sprint: {fileID: 433262351940461626, guid: 6bb05a29b875a2e4cad3f7409eb8fb25, type: 3}
   m_switch: {fileID: -9204178504943183826, guid: 6bb05a29b875a2e4cad3f7409eb8fb25, type: 3}
+  m_pickObject: {fileID: -3426665945342583095, guid: 6bb05a29b875a2e4cad3f7409eb8fb25, type: 3}
+  m_allowFollowRotation: {fileID: -8286231202327932401, guid: 6bb05a29b875a2e4cad3f7409eb8fb25, type: 3}
+  m_minCorner: {x: -5, y: 1, z: -5}
+  m_maxCorner: {x: 5, y: 5, z: 5}
 --- !u!1 &6301500637095120337
 GameObject:
   m_ObjectHideFlags: 0
