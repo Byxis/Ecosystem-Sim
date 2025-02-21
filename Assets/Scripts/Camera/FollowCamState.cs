@@ -44,8 +44,9 @@ public class FollowCamState : ICameraState
                 m_camController.transform.position = target.transform.position - m_camController.transform.forward * distance;
             }
         }
+        if(!target) return;
 
-        if (m_camController.GetAllowFollowRotation().action.IsPressed() && target != null)
+        if (m_camController.GetAllowFollowRotation().action.IsPressed())
         {
             Vector2 rotationInput = m_camController.GetRotation().action.ReadValue<Vector2>();
             
