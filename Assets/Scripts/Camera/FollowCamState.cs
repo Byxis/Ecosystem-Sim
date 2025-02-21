@@ -55,7 +55,7 @@ public class FollowCamState : ICameraState
             m_rotationY = Mathf.Clamp(m_rotationY, -90, -5);
 
             m_camController.transform.eulerAngles = new Vector3(-m_rotationY, m_rotationX, 0);
-            m_camController.transform.position = target.transform.position - m_camController.transform.forward * distance;
         }
+        m_camController.transform.position = target.transform.position - m_camController.transform.forward * distance;
     }
 }
