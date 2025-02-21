@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         // Apply the default values
-        m_cameraState = new FreeCamState();
+        m_cameraState = new FreeCamState(this);
 
         // Enable the input actions
         m_movement.action.Enable();
@@ -33,7 +33,7 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        m_cameraState.Handle(this);
+        m_cameraState.Handle();
     }
 
     public void ChangeCameraState()
@@ -44,11 +44,11 @@ public class CameraController : MonoBehaviour
         }
         else if (m_cameraState is FollowCamState)
         {
-            m_cameraState = new ControllableState();
+            m_cameraState = new ControllableState(this);
         }
         else if (m_cameraState is ControllableState)
         {
-            m_cameraState = new FreeCamState();
+            m_cameraState = new FreeCamState(this);
         }
     }
 
