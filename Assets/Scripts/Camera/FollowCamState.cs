@@ -40,8 +40,8 @@ public class FollowCamState : ICameraState
             RaycastHit hit;
 
             // If the ray hits a game object, the camera will follow it
-            //TODO: Verify if the object contain a specific component/tag for animals
-            if (Physics.Raycast(ray, out hit))
+            
+            if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.GetComponent<Animal>() != null)
             {
                 target = hit.collider.gameObject;
                 m_camController.SetTarget(target);
