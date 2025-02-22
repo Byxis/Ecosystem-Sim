@@ -11,6 +11,7 @@ public class CameraController : MonoBehaviour
     public const float MIN_DISTANCE = 2f;
     public const float MAX_DISTANCE = 35f;
     public const float SCROLL_SPEED = 0.8f;
+    public const float SWIPE_SPEED = 0.025f;
 
 
     [Header("Input Actions")]

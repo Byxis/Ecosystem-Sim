@@ -48,15 +48,34 @@ public class FollowCamState : ICameraState
                 m_camController.transform.position = target.transform.position - m_camController.transform.forward * m_distance;
             }
         }
-
-
-        if(!target) return;
-
+        
         float scroll = m_camController.GetScroll().action.ReadValue<float>();
 
         m_distance -= scroll * CameraController.SCROLL_SPEED;
         m_distance = Mathf.Clamp(m_distance, CameraController.MIN_DISTANCE, CameraController.MAX_DISTANCE);
-        Debug.Log(m_distance);
+
+        if(!target) 
+        {
+            if (m_camController.GetAllowFollowRotation().action.IsPressed())
+            {
+                Vector2 rotationInput = m_camController.GetRotation().action.ReadValue<Vector2>();
+                Transform newTransform = m_camController.transform;
+
+                newTransform.position -= new Vector3(rotationInput.x * CameraController.SWIPE_SPEED, 0, rotationInput.y * CameraController.SWIPE_SPEED);
+
+                Vector3 minCorner = m_camController.GetMinCorner();
+                Vector3 maxCorner = m_camController.GetMaxCorner();
+                
+                newTransform.position = new Vector3(
+                    Mathf.Clamp(newTransform.position.x, minCorner.x, maxCorner.x),
+                    Mathf.Clamp(newTransform.position.y, minCorner.y, maxCorner.y),
+                    Mathf.Clamp(newTransform.position.z, minCorner.z, maxCorner.z)
+                );
+
+                m_camController.transform.position = newTransform.position;
+            }
+            return;
+        }
 
         // If the player right clicks, the camera will rotate with the mouse
         if (m_camController.GetAllowFollowRotation().action.IsPressed())
