@@ -4,26 +4,42 @@ using System.Collections.Generic;
 
 public class Animal : MonoBehaviour
 {
-    public float m_health = 100f;
-    public float m_water = 100f;
-    public float m_food = 100f;
-    public float m_speed = 2f;
-    public float m_runspeed = 4f;
-    public float m_recoveryspeed = 2f;
-    public float m_energy = 100f;
-    public float m_fov = 3f;
+    [Header("Stats")]
+    [SerializeField] protected float m_health;
+    [SerializeField] protected float m_water;
+    [SerializeField] protected float m_food;
+    [SerializeField] protected float m_speed;
+    [SerializeField] protected float m_runspeed;
+    [SerializeField] protected float m_recoveryspeed;
+    [SerializeField] protected float m_energy;
+    [SerializeField] protected float m_fov;
 
-    public float m_watertreshold = 60f;
-    public float m_foodtreshold = 60f;
+    [SerializeField] protected float m_watertreshold;
+    [SerializeField] protected float m_foodtreshold;
 
-    public GameObject m_map;
+    [Header("References")]
+    [SerializeField] protected GameObject m_map;
+    
+    protected NavMeshAgent m_navMeshAgent;
 
     protected List<Collider> m_detectedColliders = new();
     protected List<Vector3> m_waterList = new();
-    protected NavMeshAgent m_navMeshAgent;
 
     protected bool m_isDrinking = false;
     protected bool m_isEating = false;
+
+    //Method to set the stats of the animal
+    public void SetStats(float _speed, float _runSpeed, float _recoverySpeed, float _energy, float _fov, float _waterTreshold, float _foodTreshold, GameObject _map)
+    {
+        m_speed = _speed;
+        m_runspeed = _runSpeed;
+        m_recoveryspeed = _recoverySpeed;
+        m_energy = _energy;
+        m_fov = _fov;
+        m_watertreshold = _waterTreshold;
+        m_foodtreshold = _foodTreshold;
+        m_map = _map;
+    }
 
     void Start()
     {
@@ -146,6 +162,7 @@ public class Animal : MonoBehaviour
         }
     }
 
+    //Required method to be implemented in the child classes
     protected virtual void Eat()
     {
 

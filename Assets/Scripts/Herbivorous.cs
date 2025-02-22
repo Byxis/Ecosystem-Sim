@@ -34,6 +34,7 @@ public class Herbivorous : Animal
         }
     }
 
+    //Method to consume each seconds
     protected override void Consume()
     {
         base.Consume();
@@ -54,7 +55,7 @@ public class Herbivorous : Animal
 
             if(m_energy > 0)
             {
-                m_navMeshAgent.speed = m_runspeed * 3;
+                m_navMeshAgent.speed = m_runspeed;
             }
         }
         else

@@ -26,6 +26,7 @@ public class Carnivorous : Animal
         }
     }
 
+    //Method to consume each seconds
     protected override void Consume()
     {
         base.Consume();
@@ -58,7 +59,7 @@ public class Carnivorous : Animal
         if (Vector3.Distance(transform.position, _prey.transform.position) < 1)
         {
             Destroy(_prey);
-            this.m_food = 100;
+            m_food = 100;
             m_navMeshAgent.speed = m_speed;
         }
     }
