@@ -1710,10 +1710,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_herbivorousPrefabs: {fileID: 4844190521701320592, guid: 5e6ebbc16bf2c024da15689ae194e038, type: 3}
   m_carnivorousPrefabs: {fileID: 7748359766407229060, guid: c9dd3b1a9d4878d48953c5e452d9069f, type: 3}
-  m_herbivorousNumber: 2
-  m_carnivorousNumber: 1
+  m_herbivorousNumber: 10
+  m_carnivorousNumber: 3
   m_herbivorousEnergy: 100
-  m_herbivorousFov: 15
+  m_herbivorousFov: 5
   m_herbivorousWaterTreshold: 30
   m_herbivorousFoodTreshold: 50
   m_carnivorousEnergy: 100

@@ -7,12 +7,12 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject m_carnivorousPrefabs;
 
     [Header("Number of animals at the spawn")]
-    [SerializeField] private int m_herbivorousNumber = 2;
-    [SerializeField] private int m_carnivorousNumber = 1;
+    [SerializeField] private int m_herbivorousNumber = 10;
+    [SerializeField] private int m_carnivorousNumber = 3;
 
     [Header("Herbivorous Stats")]
     [SerializeField] private float m_herbivorousEnergy = 100f;
-    [SerializeField] private float m_herbivorousFov = 15f;
+    [SerializeField] private float m_herbivorousFov = 5f;
 
     [SerializeField] private float m_herbivorousWaterTreshold = 30f;
     [SerializeField] private float m_herbivorousFoodTreshold = 50f;

@@ -55,7 +55,7 @@ public class Herbivorous : Animal
 
             if(m_energy > 0)
             {
-                m_navMeshAgent.speed = m_runspeed;
+                m_navMeshAgent.speed = m_runSpeed;
             }
         }
         else
@@ -68,7 +68,7 @@ public class Herbivorous : Animal
     //Method to make the animal eat
     protected override void Eat()
     {
-        if ((m_vegetationList.Count > 0 && m_food < m_foodtreshold) || m_isEating)
+        if ((m_vegetationList.Count > 0 && m_food < m_foodTreshold) || m_isEating)
         {
             Vector3 nearestVegetation = NearestVegetation();
             m_navMeshAgent.SetDestination(nearestVegetation);
@@ -91,7 +91,7 @@ public class Herbivorous : Animal
         }
     }
 
-    //Method to get the nearest vegetation
+    //Method to get the nearest vegetation, vegetationList need to have at least one element
     protected Vector3 NearestVegetation()
     {
         if (m_vegetationList.Count == 1)

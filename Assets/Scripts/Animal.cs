@@ -9,14 +9,14 @@ public class Animal : MonoBehaviour
     [SerializeField] protected float m_water;
     [SerializeField] protected float m_food;
     [SerializeField] protected float m_speed;
-    [SerializeField] protected float m_runspeed;
-    [SerializeField] protected float m_recoveryspeed;
+    [SerializeField] protected float m_runSpeed;
+    [SerializeField] protected float m_recoverySpeed;
     [SerializeField] protected float m_energy;
     [SerializeField] protected float m_fov;
     [SerializeField] protected bool m_gender; //True is a male, False is a female
 
-    [SerializeField] protected float m_watertreshold;
-    [SerializeField] protected float m_foodtreshold;
+    [SerializeField] protected float m_waterTreshold;
+    [SerializeField] protected float m_foodTreshold;
 
     [Header("References")]
     [SerializeField] protected GameObject m_map;
@@ -36,12 +36,12 @@ public class Animal : MonoBehaviour
     public void SetStats(float _speed, float _runSpeed, float _recoverySpeed, float _energy, float _fov, float _waterTreshold, float _foodTreshold, GameObject _map, bool _gender)
     {
         m_speed = _speed;
-        m_runspeed = _runSpeed;
-        m_recoveryspeed = _recoverySpeed;
+        m_runSpeed = _runSpeed;
+        m_recoverySpeed = _recoverySpeed;
         m_energy = _energy;
         m_fov = _fov;
-        m_watertreshold = _waterTreshold;
-        m_foodtreshold = _foodTreshold;
+        m_waterTreshold = _waterTreshold;
+        m_foodTreshold = _foodTreshold;
         m_map = _map;
         m_gender = _gender;
     }
@@ -112,7 +112,7 @@ public class Animal : MonoBehaviour
     //Method to Drink
     protected void Drink()
     {
-        if (m_water < m_watertreshold && m_waterList.Count > 0 || m_isDrinking)
+        if (m_water < m_waterTreshold && m_waterList.Count > 0 || m_isDrinking)
         {
             Vector3 nearestWater = NearestWaterSource();
             m_navMeshAgent.SetDestination(nearestWater);
@@ -134,7 +134,7 @@ public class Animal : MonoBehaviour
         }
     }
 
-    //Method to detect water sources
+    //Method to detect water sources, waterList need to have at least one element
     protected Vector3 NearestWaterSource()
     {
         if (m_waterList.Count == 1)
@@ -185,12 +185,12 @@ public class Animal : MonoBehaviour
                         if (babyAnimal != null)
                         {
                             float babySpeed = Random.Range(m_speed, pretendantAnimal.m_speed);
-                            float babyRunSpeed = Random.Range(m_runspeed, pretendantAnimal.m_runspeed);
-                            float babyRecoverySpeed = Random.Range(m_recoveryspeed, pretendantAnimal.m_recoveryspeed);
+                            float babyRunSpeed = Random.Range(m_runSpeed, pretendantAnimal.m_runSpeed);
+                            float babyRecoverySpeed = Random.Range(m_recoverySpeed, pretendantAnimal.m_recoverySpeed);
                             float babyEnergy = Random.Range(m_energy, pretendantAnimal.m_energy);
                             float babyFov = Random.Range(m_fov, pretendantAnimal.m_fov);
-                            float babyWaterThreshold = Random.Range(m_watertreshold, pretendantAnimal.m_watertreshold);
-                            float babyFoodThreshold = Random.Range(m_foodtreshold, pretendantAnimal.m_foodtreshold);
+                            float babyWaterThreshold = Random.Range(m_waterTreshold, pretendantAnimal.m_waterTreshold);
+                            float babyFoodThreshold = Random.Range(m_foodTreshold, pretendantAnimal.m_foodTreshold);
                             bool babyGender = Random.Range(0f, 1f) > 0.5f;
 
                             babyAnimal.SetStats(babySpeed, babyRunSpeed, babyRecoverySpeed, babyEnergy, babyFov, babyWaterThreshold, babyFoodThreshold, m_map, babyGender);
@@ -208,7 +208,7 @@ public class Animal : MonoBehaviour
     {
         m_water = Mathf.Max(0, m_water - 1);
         m_food = Mathf.Max(0, m_food - 1);
-        m_energy = Mathf.Min(100, m_energy + m_recoveryspeed);
+        m_energy = Mathf.Min(100, m_energy + m_recoverySpeed);
 
         if (m_water == 0 || m_food == 0)
         {

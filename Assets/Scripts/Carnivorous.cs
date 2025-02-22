@@ -40,7 +40,7 @@ public class Carnivorous : Animal
     //Method to make the animal eat
     protected override void Eat()
     {
-        if (m_preyList.Count > 0 && m_food < m_foodtreshold)
+        if (m_preyList.Count > 0 && m_food < m_foodTreshold)
         {
             m_isHunting = true;
             Attack(m_preyList[0]);
@@ -54,7 +54,7 @@ public class Carnivorous : Animal
     //Method to make the animal attack
     protected void Attack(GameObject _prey)
     {
-        m_navMeshAgent.speed = m_runspeed;
+        m_navMeshAgent.speed = m_runSpeed;
         m_navMeshAgent.SetDestination(_prey.transform.position);
         if (Vector3.Distance(transform.position, _prey.transform.position) < 1)
         {
