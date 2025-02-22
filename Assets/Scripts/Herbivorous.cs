@@ -7,6 +7,8 @@ public class Herbivorous : Animal
     protected List<Vector3> m_vegetationList = new();
     protected List<GameObject> m_predatorList = new();
 
+    protected bool m_isFleeing = false;
+
     protected override void Update()
     {
         base.Update();
@@ -17,18 +19,28 @@ public class Herbivorous : Animal
     }
 
     //Method to add colliders to the list of detected colliders
-    protected override void HandleColliderDetection(Collider collider)
+    protected override void HandleColliderDetection(Collider _collider)
     {
-        base.HandleColliderDetection(collider);
+        base.HandleColliderDetection(_collider);
 
-        if (collider.CompareTag("Vegetation"))
+        if (_collider.CompareTag("Vegetation"))
         {
-            m_vegetationList.Add(collider.ClosestPoint(transform.position));
+            m_vegetationList.Add(_collider.ClosestPoint(transform.position));
         }
 
-        if (collider.GetComponent<Animal>() != null && collider.GetComponent<Animal>().GetType() == typeof(Carnivorous))
+        if (_collider.GetComponent<Animal>() != null && _collider.GetComponent<Animal>().GetType() == typeof(Carnivorous))
         {
-            m_predatorList.Add(collider.gameObject);
+            m_predatorList.Add(_collider.gameObject);
+        }
+    }
+
+    protected override void Consume()
+    {
+        base.Consume();
+
+        if (m_isFleeing) 
+        {
+             m_energy = Mathf.Max(m_energy - 20, 0);
         }
     }
 
@@ -37,12 +49,17 @@ public class Herbivorous : Animal
     {
         if (m_predatorList.Count > 0)
         {
-
+            m_isFleeing = true;
             m_navMeshAgent.SetDestination(transform.position + (transform.position - m_predatorList[0].transform.position));
-            m_navMeshAgent.speed = m_runspeed*3;
+
+            if(m_energy > 0)
+            {
+                m_navMeshAgent.speed = m_runspeed * 3;
+            }
         }
         else
         {
+            m_isFleeing = false;
             m_navMeshAgent.speed = m_speed;
         }
     }
@@ -50,26 +67,26 @@ public class Herbivorous : Animal
     //Method to make the animal eat
     protected override void Eat()
     {
-        if ((m_vegetationList.Count > 0 && m_food < m_foodtreshold) || isEating)
+        if ((m_vegetationList.Count > 0 && m_food < m_foodtreshold) || m_isEating)
         {
             Vector3 nearestVegetation = NearestVegetation();
             m_navMeshAgent.SetDestination(nearestVegetation);
 
             if (Vector3.Distance(transform.position, nearestVegetation) < 1)
             {
-                isEating = true;
+                m_isEating = true;
 
                 m_food = Mathf.Min(m_food + 10 * Time.deltaTime, 100f);
 
                 if (m_food == 100)
                 {
-                    isEating = false;
+                    m_isEating = false;
                 }
             }
         }
         else
         {
-            isEating = false;
+            m_isEating = false;
         }
     }
 

@@ -1,12 +1,12 @@
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
 using System.Collections.Generic;
 
 public class Carnivorous : Animal
 {
     protected List<GameObject> m_preyList = new();
+
+    protected bool m_isHunting = false;
 
     protected override void Update()
     {
@@ -16,13 +16,23 @@ public class Carnivorous : Animal
     }
 
     //Method to add colliders to the list of detected colliders
-    protected override void HandleColliderDetection(Collider collider)
+    protected override void HandleColliderDetection(Collider _collider)
     {
-        base.HandleColliderDetection(collider);
+        base.HandleColliderDetection(_collider);
 
-        if (collider.GetComponent<Animal>() != null && collider.GetComponent<Animal>().GetType() == typeof(Herbivorous))
+        if (_collider.GetComponent<Animal>() != null && _collider.GetComponent<Animal>().GetType() == typeof(Herbivorous))
         {
-            m_preyList.Add(collider.gameObject);
+            m_preyList.Add(_collider.gameObject);
+        }
+    }
+
+    protected override void Consume()
+    {
+        base.Consume();
+
+        if (m_isHunting)
+        {
+            m_energy = Mathf.Max(m_energy - 15, 0);
         }
     }
 
@@ -31,7 +41,12 @@ public class Carnivorous : Animal
     {
         if (m_preyList.Count > 0 && m_food < m_foodtreshold)
         {
+            m_isHunting = true;
             Attack(m_preyList[0]);
+        }
+        else
+        {
+            m_isHunting = false;
         }
     }
 

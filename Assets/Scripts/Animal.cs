@@ -1,5 +1,3 @@
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
@@ -11,13 +9,12 @@ public class Animal : MonoBehaviour
     public float m_food = 100f;
     public float m_speed = 2f;
     public float m_runspeed = 4f;
-    public float m_recovery_speed = 2f;
+    public float m_recoveryspeed = 2f;
     public float m_energy = 100f;
     public float m_fov = 3f;
 
     public float m_watertreshold = 60f;
     public float m_foodtreshold = 60f;
-    public float m_energytreshold = 60f;
 
     public GameObject m_map;
 
@@ -25,8 +22,8 @@ public class Animal : MonoBehaviour
     protected List<Vector3> m_waterList = new();
     protected NavMeshAgent m_navMeshAgent;
 
-    protected bool isDrinking = false;
-    protected bool isEating = false;
+    protected bool m_isDrinking = false;
+    protected bool m_isEating = false;
 
     void Start()
     {
@@ -43,7 +40,7 @@ public class Animal : MonoBehaviour
         Drink();
         Eat();
 
-        if (!isDrinking && !isEating)
+        if (!m_isDrinking && !m_isEating)
         {
             Move();
         }
@@ -63,11 +60,11 @@ public class Animal : MonoBehaviour
     }
 
     //Method to handle the detection of colliders
-    protected virtual void HandleColliderDetection(Collider collider)
+    protected virtual void HandleColliderDetection(Collider _collider)
     {
-        if (collider.CompareTag("Water"))
+        if (_collider.CompareTag("Water"))
         {
-            m_waterList.Add(collider.ClosestPoint(transform.position));
+            m_waterList.Add(_collider.ClosestPoint(transform.position));
         }
     }
 
@@ -86,25 +83,25 @@ public class Animal : MonoBehaviour
     //Method to Drink
     protected void Drink()
     {
-        if (m_water < m_watertreshold && m_waterList.Count > 0 || isDrinking)
+        if (m_water < m_watertreshold && m_waterList.Count > 0 || m_isDrinking)
         {
             Vector3 nearestWater = NearestWaterSource();
             m_navMeshAgent.SetDestination(nearestWater);
 
             if (Vector3.Distance(transform.position, nearestWater) < 1)
             {
-                isDrinking = true;
+                m_isDrinking = true;
                 m_water = Mathf.Min(m_water + 10 * Time.deltaTime, 100f);
 
                 if (m_water == 100)
                 {
-                    isDrinking = false;
+                    m_isDrinking = false;
                 }
             }
         }
         else
         {
-            isDrinking = false;
+            m_isDrinking = false;
         }
     }
 
@@ -132,10 +129,11 @@ public class Animal : MonoBehaviour
     }
 
     //Method to consume resources each seconds
-    void Consume()
+    protected virtual void Consume()
     {
         m_water = Mathf.Max(0, m_water - 1);
         m_food = Mathf.Max(0, m_food - 1);
+        m_energy = Mathf.Min(100, m_energy + m_recoveryspeed);
 
         if (m_water == 0 || m_food == 0)
         {
@@ -146,7 +144,6 @@ public class Animal : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
     }
 
     protected virtual void Eat()
