@@ -1,31 +1,32 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class FollowCamState : ICameraState
 {
-
-    private Vector3 m_defaultPosition;
-    private Quaternion m_defaultRotation;
     private CameraController m_camController;
-    private float m_rotationX = 0;
-    private float m_rotationY = -90;
-    public float rotationSpeed = 0.5f;
-    public float distance = 5f;
+    private float m_rotationX;
+    private float m_rotationY;
+    private float m_distance = 5f;
 
     public FollowCamState(CameraController controller)
     {
         m_camController = controller;
-        m_defaultPosition = new Vector3(0, 5, 0);
-        m_defaultRotation = Quaternion.Euler(90, 0, 0);
+        m_rotationX = 0;
+        m_rotationY = -90;
 
+        // Show the cursor and unlock it
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
-        m_camController.transform.position = m_defaultPosition;
-        m_camController.transform.rotation = m_defaultRotation;
         
-        if (m_camController.gameObject.GetComponent<Rigidbody>())
+        // Remove the rigidbody and box collider from the camera if they exist
+        Rigidbody rb = m_camController.gameObject.GetComponent<Rigidbody>();
+        if (rb != null)
         {
-            m_camController.gameObject.GetComponent<Rigidbody>().useGravity = false;
+            Object.Destroy(rb);
+        }
+        BoxCollider collider = m_camController.gameObject.GetComponent<BoxCollider>();
+        if (collider != null)
+        {
+            Object.Destroy(collider);
         }
     }
     public void Handle()
@@ -37,26 +38,33 @@ public class FollowCamState : ICameraState
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
+
+            // If the ray hits a game object, the camera will follow it
+            //TODO: Verify if the object contain a specific component/tag for animals
             if (Physics.Raycast(ray, out hit))
             {
-                m_camController.SetTarget(hit.collider.gameObject);
-                target = m_camController.GetTarget();
-                m_camController.transform.position = target.transform.position - m_camController.transform.forward * distance;
+                target = hit.collider.gameObject;
+                m_camController.SetTarget(target);
+                m_camController.transform.position = target.transform.position - m_camController.transform.forward * m_distance;
             }
         }
+
         if(!target) return;
 
+        // If the player right clicks, the camera will rotate with the mouse
         if (m_camController.GetAllowFollowRotation().action.IsPressed())
         {
             Vector2 rotationInput = m_camController.GetRotation().action.ReadValue<Vector2>();
             
-            m_rotationX += rotationInput.x * rotationSpeed;
-            m_rotationY += rotationInput.y * rotationSpeed;
+            m_rotationX += rotationInput.x * CameraController.ROTATION_SPEED;
+            m_rotationY += rotationInput.y * CameraController.ROTATION_SPEED;
 
             m_rotationY = Mathf.Clamp(m_rotationY, -90, -5);
 
             m_camController.transform.eulerAngles = new Vector3(-m_rotationY, m_rotationX, 0);
         }
-        m_camController.transform.position = target.transform.position - m_camController.transform.forward * distance;
+
+        // The position is adjusted to be at a distance from the target
+        m_camController.transform.position = target.transform.position - m_camController.transform.forward * m_distance;
     }
 }
