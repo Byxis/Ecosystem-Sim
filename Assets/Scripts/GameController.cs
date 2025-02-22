@@ -7,12 +7,12 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject m_carnivorousPrefabs;
 
     [Header("Number of animals at the spawn")]
-    [SerializeField] private int m_herbivorousNumber = 15;
-    [SerializeField] private int m_carnivorousNumber = 5;
+    [SerializeField] private int m_herbivorousNumber = 2;
+    [SerializeField] private int m_carnivorousNumber = 1;
 
     [Header("Herbivorous Stats")]
     [SerializeField] private float m_herbivorousEnergy = 100f;
-    [SerializeField] private float m_herbivorousFov = 5f;
+    [SerializeField] private float m_herbivorousFov = 15f;
 
     [SerializeField] private float m_herbivorousWaterTreshold = 30f;
     [SerializeField] private float m_herbivorousFoodTreshold = 50f;
@@ -74,7 +74,8 @@ public class GameController : MonoBehaviour
             m_herbivorousFov,
             m_herbivorousWaterTreshold,
             m_herbivorousFoodTreshold,
-            m_map
+            m_map,
+            Random.Range(0, 2) == 0
         );
     }
 
@@ -89,7 +90,8 @@ public class GameController : MonoBehaviour
             m_carnivorousFov,
             m_carnivorousWaterTreshold,
             m_carnivorousFoodTreshold,
-            m_map
+            m_map,
+            Random.Range(0, 2) == 0
         );
     }
 }

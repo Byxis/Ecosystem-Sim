@@ -6,7 +6,7 @@ public class Carnivorous : Animal
 {
     protected List<GameObject> m_preyList = new();
 
-    protected bool m_isHunting = false;
+    [SerializeField] protected bool m_isHunting = false;
 
     protected override void Update()
     {

@@ -7,7 +7,7 @@ public class Herbivorous : Animal
     protected List<Vector3> m_vegetationList = new();
     protected List<GameObject> m_predatorList = new();
 
-    protected bool m_isFleeing = false;
+    [SerializeField] protected bool m_isFleeing = false;
 
     protected override void Update()
     {
