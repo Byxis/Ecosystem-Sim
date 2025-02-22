@@ -25,6 +25,7 @@ public class FollowCamState : ICameraState
         
         if (m_camController.gameObject.GetComponent<Rigidbody>())
         {
+            m_camController.gameObject.GetComponent<Rigidbody>().isKinematic = false;
             m_camController.gameObject.GetComponent<Rigidbody>().useGravity = false;
         }
     }

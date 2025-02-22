@@ -8,15 +8,12 @@ public class ControllableState : ICameraState
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         m_camController = controller;
-        if (m_camController.gameObject.GetComponent<Rigidbody>())
+        if (!m_camController.gameObject.GetComponent<Rigidbody>())
         {
-            m_camController.gameObject.GetComponent<Rigidbody>().useGravity = true;
+            m_camController.gameObject.AddComponent<Rigidbody>();
         }
-        else
-        {
-            m_camController.gameObject.GetComponent<Rigidbody>().useGravity = true;
-            m_camController.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-        }
+        m_camController.gameObject.GetComponent<Rigidbody>().useGravity = true;
+        m_camController.gameObject.GetComponent<Rigidbody>().isKinematic = false;
     }
     public void Handle()
     {
