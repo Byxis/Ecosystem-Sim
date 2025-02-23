@@ -5,11 +5,21 @@ public class FollowCamState : ICameraState
     private CameraController m_camController;
     private float m_rotationX;
     private float m_rotationY;
-    private float m_distance = 5f;
+    private float m_distance;
+
+    private const float DEFAULT_DISTANCE = 10f;
 
     public FollowCamState(CameraController controller)
     {
         m_camController = controller;
+        if(m_camController.GetTarget() == null)
+        {
+            m_distance = m_camController.transform.position.y;
+        }
+        else
+        {
+            m_distance = DEFAULT_DISTANCE;
+        }
         m_rotationX = 0;
         m_rotationY = -90;
 
@@ -44,16 +54,16 @@ public class FollowCamState : ICameraState
             if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.GetComponent<Animal>() != null)
             {
                 target = hit.collider.gameObject;
+                m_distance = DEFAULT_DISTANCE;
                 m_camController.SetTarget(target);
                 m_camController.transform.position = target.transform.position - m_camController.transform.forward * m_distance;
             }
         }
-        
         float scroll = m_camController.GetScroll().action.ReadValue<float>();
 
         m_distance -= scroll * CameraController.SCROLL_SPEED;
         m_distance = Mathf.Clamp(m_distance, CameraController.MIN_DISTANCE, CameraController.MAX_DISTANCE);
-
+        m_camController.transform.position = new Vector3(m_camController.transform.position.x, m_distance, m_camController.transform.position.z);
         if(!target) 
         {
             if (m_camController.GetAllowFollowRotation().action.IsPressed())
@@ -68,7 +78,7 @@ public class FollowCamState : ICameraState
                 
                 newTransform.position = new Vector3(
                     Mathf.Clamp(newTransform.position.x, minCorner.x, maxCorner.x),
-                    Mathf.Clamp(newTransform.position.y, minCorner.y, maxCorner.y),
+                    newTransform.position.y,
                     Mathf.Clamp(newTransform.position.z, minCorner.z, maxCorner.z)
                 );
 

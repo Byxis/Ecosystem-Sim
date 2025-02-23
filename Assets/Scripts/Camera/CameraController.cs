@@ -74,27 +74,27 @@ public class CameraController : MonoBehaviour
         // Global Camera -> Follow Camera -> Free Camera -> Controllable Camera -> Global Camera
         if (m_cameraState is GlobalCamState)
         {
-            m_cameraState = new FollowCamState(this);
             transform.position = m_defaultFollowCamPosition;
             transform.rotation = m_defaultFollowCamRotation;
+            m_cameraState = new FollowCamState(this);
         }
         else if (m_cameraState is FollowCamState)
         {
-            m_cameraState = new FreeCamState(this);
             transform.position = m_defaultFreeCamPosition;
             transform.rotation = m_defaultFreeCamRotation;
+            m_cameraState = new FreeCamState(this);
         }
         else if (m_cameraState is FreeCamState)
         {
-            m_cameraState = new ControllableState(this);
             transform.position = m_defaultControllableCamPosition;
             transform.rotation = m_defaultControllableCamRotation;
+            m_cameraState = new ControllableState(this);
         }
         else if (m_cameraState is ControllableState)
         {
-            m_cameraState = new GlobalCamState(this);
             transform.position = m_defaultGlobalPosition;
             transform.rotation = m_defaultGlobalRotation;
+            m_cameraState = new GlobalCamState(this);
         }
     }
 
