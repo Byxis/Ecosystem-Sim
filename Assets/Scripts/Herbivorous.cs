@@ -82,8 +82,9 @@ public class Herbivorous : Animal
             m_isEating = true;
             m_timeEating -= Time.deltaTime;
             m_food += m_energyGain / m_totalTimeEating * Time.deltaTime;
-
-            if (m_timeEating <= 0)
+            PositionedGameObject nearestVegetation = NearestVegetation();
+            Debug.Log(Vector3.Distance(nearestVegetation.Position, transform.position));
+            if (m_timeEating <= 0 || Vector3.Distance(nearestVegetation.Position, transform.position) > 1.5f)
             {
                 m_isEating = false;
                 m_timeEating = 0;
