@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Bushes : MonoBehaviour, IVegetation
+public class FruitBush : MonoBehaviour, IVegetation
 {
     private int m_maxNbOfFruits = 6;
     [SerializeField] private int m_nbOfFruits;
