@@ -4,9 +4,14 @@ using UnityEngine.InputSystem;
 public class CameraController : MonoBehaviour
 {
     public const float MOVEMENT_SPEED = 4f;
-    public const float ROTATION_SPEED = 0.1f;
+    public const float LOOK_ROTATION_SPEED = 0.1f;
+    public const float ORBIT_ROTATION_SPEED = 0.2f;
     public const float SPRINT_MULTIPLIER = 2f;
     public const float MAX_VERTICAL_ANGLE = 89f;
+    public const float MIN_DISTANCE = 2f;
+    public const float MAX_DISTANCE = 35f;
+    public const float SCROLL_SPEED = 0.8f;
+    public const float SWIPE_SPEED = 0.025f;
 
 
     [Header("Input Actions")]
@@ -17,6 +22,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private InputActionReference m_switch;
     [SerializeField] private InputActionReference m_pickObject;
     [SerializeField] private InputActionReference m_allowFollowRotation;
+    [SerializeField] private InputActionReference m_zoom;
     
 
     [Header("Camera Boundaries")]
@@ -27,13 +33,13 @@ public class CameraController : MonoBehaviour
     
     // Default camera positions and rotations
 
-    private Vector3 m_defaultGlobalPosition = new Vector3(0, 4, -8);
-    private Quaternion m_defaultGlobalRotation = Quaternion.Euler(30, 0, 0);
+    private Vector3 m_defaultGlobalPosition = new Vector3(0, 20, -30);
+    private Quaternion m_defaultGlobalRotation = Quaternion.Euler(45, 0, 0);
 
-    private Vector3 m_defaultFollowCamPosition = new Vector3(0, 10, 0);
+    private Vector3 m_defaultFollowCamPosition = new Vector3(0, 40, 0);
     private Quaternion m_defaultFollowCamRotation = Quaternion.Euler(90, 0, 0);
 
-    private Vector3 m_defaultFreeCamPosition = new Vector3(0, 2, 0);
+    private Vector3 m_defaultFreeCamPosition = new Vector3(0, 3, 0);
     private Quaternion m_defaultFreeCamRotation = Quaternion.Euler(0, 0, 0);
 
     private Vector3 m_defaultControllableCamPosition = new Vector3(0, 1, 0);
@@ -68,27 +74,27 @@ public class CameraController : MonoBehaviour
         // Global Camera -> Follow Camera -> Free Camera -> Controllable Camera -> Global Camera
         if (m_cameraState is GlobalCamState)
         {
-            m_cameraState = new FollowCamState(this);
             transform.position = m_defaultFollowCamPosition;
             transform.rotation = m_defaultFollowCamRotation;
+            m_cameraState = new FollowCamState(this);
         }
         else if (m_cameraState is FollowCamState)
         {
-            m_cameraState = new FreeCamState(this);
             transform.position = m_defaultFreeCamPosition;
             transform.rotation = m_defaultFreeCamRotation;
+            m_cameraState = new FreeCamState(this);
         }
         else if (m_cameraState is FreeCamState)
         {
-            m_cameraState = new ControllableState(this);
             transform.position = m_defaultControllableCamPosition;
             transform.rotation = m_defaultControllableCamRotation;
+            m_cameraState = new ControllableState(this);
         }
         else if (m_cameraState is ControllableState)
         {
-            m_cameraState = new GlobalCamState(this);
             transform.position = m_defaultGlobalPosition;
             transform.rotation = m_defaultGlobalRotation;
+            m_cameraState = new GlobalCamState(this);
         }
     }
 
@@ -135,5 +141,10 @@ public class CameraController : MonoBehaviour
     public void SetTarget(GameObject target)
     {
         m_target = target;
+    }
+
+    public InputActionReference GetScroll()
+    {
+        return m_zoom;
     }
 }
