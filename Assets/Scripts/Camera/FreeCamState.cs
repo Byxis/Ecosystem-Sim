@@ -42,8 +42,8 @@ public class FreeCamState : ICameraState
         Transform newTransform = m_camController.transform;
 
         // Handle rotation
-        m_currentHorizontalRotation += rotation.x * CameraController.LOOK_ROTATION_SPEED;
-        m_currentVerticalRotation -= rotation.y * CameraController.LOOK_ROTATION_SPEED;
+        m_currentHorizontalRotation += rotation.x * CameraController.ROTATION_SPEED;
+        m_currentVerticalRotation -= rotation.y * CameraController.ROTATION_SPEED;
         m_currentVerticalRotation = Mathf.Clamp(m_currentVerticalRotation, -CameraController.MAX_VERTICAL_ANGLE, CameraController.MAX_VERTICAL_ANGLE);
         newTransform.rotation = Quaternion.Euler(m_currentVerticalRotation, m_currentHorizontalRotation, 0);
 
