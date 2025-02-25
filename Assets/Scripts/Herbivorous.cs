@@ -1,13 +1,17 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
 public class Herbivorous : Animal
 {
-    protected List<Vector3> m_vegetationList = new();
+    [SerializeField] protected List<PositionedGameObject> m_vegetationList = new();
     protected List<GameObject> m_predatorList = new();
 
     [SerializeField] protected bool m_isFleeing = false;
+    private float m_timeEating = 0;
+    private float m_totalTimeEating = 0;
+    private float m_energyGain = 0;
 
     protected override void Update()
     {
@@ -25,7 +29,12 @@ public class Herbivorous : Animal
 
         if (_collider.CompareTag("Vegetation"))
         {
-            m_vegetationList.Add(_collider.ClosestPoint(transform.position));
+            IVegetation vegetation = _collider.GetComponent<IVegetation>();
+
+            if (vegetation != null && vegetation.IsConsumable())
+            {
+                m_vegetationList.Add(new PositionedGameObject(_collider, gameObject));
+            }
         }
 
         if (_collider.GetComponent<Animal>() != null && _collider.GetComponent<Animal>().GetType() == typeof(Carnivorous))
@@ -68,31 +77,57 @@ public class Herbivorous : Animal
     //Method to make the animal eat
     protected override void Eat()
     {
-        if ((m_vegetationList.Count > 0 && m_food < m_foodTreshold) || m_isEating)
+        if (m_timeEating > 0)
         {
-            Vector3 nearestVegetation = NearestVegetation();
-            m_navMeshAgent.SetDestination(nearestVegetation);
-
-            if (Vector3.Distance(transform.position, nearestVegetation) < 1)
+            m_isEating = true;
+            m_timeEating -= Time.deltaTime;
+            m_food += m_energyGain / m_totalTimeEating * Time.deltaTime;
+            PositionedGameObject nearestVegetation = NearestVegetation();
+            Debug.Log(Vector3.Distance(nearestVegetation.Position, transform.position));
+            if (m_timeEating <= 0 || Vector3.Distance(nearestVegetation.Position, transform.position) > 1.5f)
             {
-                m_isEating = true;
+                m_isEating = false;
+                m_timeEating = 0;
+                m_energyGain = 0;
+            }
+            if (m_food >= 100)
+            {
+                m_food = 100;
+                m_isEating = false;
+                m_timeEating = 0;
+                m_energyGain = 0;
+            }
+            return;
+        }
 
-                m_food = Mathf.Min(m_food + 10 * Time.deltaTime, 100f);
 
-                if (m_food == 100)
+        if (m_vegetationList.Count > 0 && m_food < m_foodTreshold)
+        {
+            PositionedGameObject nearestVegetation = NearestVegetation();
+            m_navMeshAgent.SetDestination(nearestVegetation.Position);
+
+            if (Vector3.Distance(transform.position, nearestVegetation.Position) < 1)
+            {
+                IVegetation vegetation = nearestVegetation.GameObject.GetComponent<IVegetation>();
+
+                if (vegetation.IsConsumable())
                 {
-                    m_isEating = false;
+                    float[] gains = vegetation.Consume();
+                    m_energyGain = gains[0];
+                    m_totalTimeEating = gains[1];
+                    m_timeEating = m_totalTimeEating;
+                }
+                else
+                {
+                    if (m_timeEating <= 0)
+                        m_vegetationList.Remove(nearestVegetation);
                 }
             }
         }
-        else
-        {
-            m_isEating = false;
-        }
     }
 
-    //Method to get the nearest vegetation, vegetationList need to have at least one element
-    protected Vector3 NearestVegetation()
+    //Method to get the nearest vegetation
+    protected PositionedGameObject NearestVegetation()
     {
         if (m_vegetationList.Count == 1)
         {
@@ -100,13 +135,13 @@ public class Herbivorous : Animal
         }
         else
         {
-            float distance = Vector3.Distance(m_vegetationList[0], transform.position);
-            Vector3 nearestVegetation = m_vegetationList[0];
+            float distance = Vector3.Distance(m_vegetationList[0].Position, transform.position);
+            PositionedGameObject nearestVegetation = m_vegetationList[0];
             for (int i = 1; i < m_vegetationList.Count; i++)
             {
-                if (Vector3.Distance(m_vegetationList[i], transform.position) < distance)
-                {
-                    distance = Vector3.Distance(m_vegetationList[i], transform.position);
+                if (Vector3.Distance(m_vegetationList[i].Position, transform.position) < distance)
+                {                    
+                    distance = Vector3.Distance(m_vegetationList[i].Position, transform.position);
                     nearestVegetation = m_vegetationList[i];
                 }
             }
